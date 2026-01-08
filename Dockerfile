@@ -1,25 +1,28 @@
 FROM ghcr.io/puppeteer/puppeteer:latest
 
-# Use root to setup
 USER root
+
+# Set a custom cache directory inside the app folder
+ENV PUPPETEER_CACHE_DIR=/usr/src/app/.cache/puppeteer
+
 WORKDIR /usr/src/app
 
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies (this will now download the correct Chromium)
+# Install dependencies
 RUN npm install
 
-# Copy source code
+# EXPLICITLY install the Chrome browser in our custom cache folder
+RUN npx puppeteer browsers install chrome
+
 COPY . .
 
-# Set permissions
+# Ensure the pptruser owns everything, including the browser cache
 RUN chown -R pptruser:pptruser /usr/src/app
 
-# Switch to non-root user
 USER pptruser
 
-# Render uses the PORT environment variable
+# Expose port (Render uses 10000 usually, but your code handles process.env.PORT)
 EXPOSE 5000
 
 CMD ["node", "server.js"]
