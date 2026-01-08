@@ -1,21 +1,25 @@
 FROM ghcr.io/puppeteer/puppeteer:latest
 
-# Use root to install dependencies to avoid permission issues
+# Use root to setup
 USER root
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-
 WORKDIR /usr/src/app
 
+# Copy package files
 COPY package*.json ./
-RUN npm ci
 
+# Install dependencies (this will now download the correct Chromium)
+RUN npm install
+
+# Copy source code
 COPY . .
 
-# Change ownership to the pptruser so it can run the app
+# Set permissions
 RUN chown -R pptruser:pptruser /usr/src/app
 
-# Switch back to non-root user
+# Switch to non-root user
 USER pptruser
 
-CMD ["npm", "start"]
+# Render uses the PORT environment variable
+EXPOSE 5000
+
+CMD ["node", "server.js"]
