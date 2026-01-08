@@ -3,8 +3,7 @@ FROM ghcr.io/puppeteer/puppeteer:latest
 # Use root to install dependencies to avoid permission issues
 USER root
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 WORKDIR /usr/src/app
 
